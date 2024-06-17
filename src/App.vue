@@ -1,26 +1,56 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <h1>Golf Courses Along Route</h1>
+    <input
+      type="text"
+      v-model="start"
+      placeholder="Start Location"
+    />
+    <input
+      type="text"
+      v-model="end"
+      placeholder="End Location"
+    />
+    <button @click="handleSearch">Search</button>
+
+    <div>
+      <h2>Golf Courses</h2>
+      <ul>
+        <li v-for="course in golfCourses" :key="course.id">
+          {{ course.name }}
+        </li>
+      </ul>
+    </div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import axios from 'axios';
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  data() {
+    return {
+      start: '',
+      end: '',
+      golfCourses: []
+    };
+  },
+  methods: {
+    async handleSearch() {
+      try {
+        const response = await axios.post('http://localhost:5000/api/search', {
+          start: this.start,
+          end: this.end
+        });
+        this.golfCourses = response.data;
+      } catch (error) {
+        console.error('Error fetching golf courses:', error);
+      }
+    }
   }
-}
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style scoped>
+/* Add your styles here */
 </style>
